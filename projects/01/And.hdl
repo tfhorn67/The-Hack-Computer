@@ -4,7 +4,7 @@
 // File name: projects/01/And.hdl
 
 /**
- * And gate: 
+ * And gate:
  * out = 1 if (a == 1 and b == 1)
  *       0 otherwise
  */
@@ -15,4 +15,8 @@ CHIP And {
 
     PARTS:
     // Put your code here:
+    // x And y = Not(x Nand y) = (x Nand y) Nand (x Nand y);
+    Nand(a=a, b=b, out=j);
+    Nand(a=a, b=b, out=k);
+    Nand(a=j, b=k, out=out);
 }
