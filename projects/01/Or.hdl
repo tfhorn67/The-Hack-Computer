@@ -15,4 +15,9 @@ CHIP Or {
 
     PARTS:
     // Put your code here:
+    // x Or y = (Not x) Nand (Not y) = (x Nand x) Nand (y Nand y)
+    Nand(a=a, b=a, out=j);
+    Nand(a=b, b=b, out=k);
+    Nand(a=j, b=k, out=out);
+
 }
