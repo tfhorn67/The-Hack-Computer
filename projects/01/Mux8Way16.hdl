@@ -19,4 +19,9 @@ CHIP Mux8Way16 {
 
     PARTS:
     // Put your code here:
+    //So, should be able to do a touch of fancy footwork with input arrangement
+    //and feed the output of two Mux4Way16.hdls into one Mux16.hdl...
+    Mux4Way16(a=a, b=b, c=c, d=d, sel[0]=sel[0], sel[1]=sel[1], out=l);
+    Mux4Way16(a=e, b=f, c=g, d=h, sel[0]=sel[0], sel[1]=sel[1], out=m);
+    Mux16(a=l, b=m, sel=sel[2], out=out);
 }
