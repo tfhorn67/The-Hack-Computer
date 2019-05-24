@@ -7,7 +7,7 @@
  * The ALU (Arithmetic Logic Unit).
  * Computes one of the following functions:
  * x+y, x-y, y-x, 0, 1, -1, x, y, -x, -y, !x, !y,
- * x+1, y+1, x-1, y-1, x&y, x|y on two 16-bit inputs, 
+ * x+1, y+1, x-1, y-1, x&y, x|y on two 16-bit inputs,
  * according to 6 input bits denoted zx,nx,zy,ny,f,no.
  * In addition, the ALU computes two 1-bit outputs:
  * if the ALU output == 0, zr is set to 1; otherwise zr is set to 0;
@@ -27,8 +27,8 @@
 // if (out < 0) set ng = 1
 
 CHIP ALU {
-    IN  
-        x[16], y[16],  // 16-bit inputs        
+    IN
+        x[16], y[16],  // 16-bit inputs
         zx, // zero the x input?
         nx, // negate the x input?
         zy, // zero the y input?
@@ -36,11 +36,33 @@ CHIP ALU {
         f,  // compute out = x + y (if 1) or x & y (if 0)
         no; // negate the out output?
 
-    OUT 
+    OUT
         out[16], // 16-bit output
         zr, // 1 if (out == 0), 0 otherwise
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
    // Put you code here:
+   Mux16(a=x, b=false, sel=zx, out=zxOut); //zx Mux the x[16]
+   Not16(in=zxOut, out=nzxOut);
+   Mux16(a=zxOut, b=nzxOut, sel=nx, out=nxOut); //nx Mux the zx output
+
+   Mux16(a=y, b=false, sel=zy, out=zyOut); //zy Mux the y[16]
+   Not16(in=zyOut, out=nzyOut);
+   Mux16(a=zyOut, b=nzyOut, sel=ny, out=nyOut); //ny Mux the zy output
+
+   //pass x and y permutations into parallel And16 and Add16
+   And16(a=nxOut, b=nyOut, out=xAndyOut);
+   Add16(a=nxOut, b=nyOut, out=xAddyOut);
+
+   Mux16(a=xAndyOut, b=xAddyOut, sel=f, out=fOut);//Mux the And16 and Add16 outputs
+   Not16(in=fOut, out=nfOut);
+   Mux16(a=fOut, b=nfOut, sel=no, out=out, out[15]=ngIndicator, out[0..7]=left, out[8..15]=right);//fork output into no Mux
+
+   Or8Way(in=left, out=neg);
+   Or8Way(in=right, out=pos);
+   Or(a=neg, b=pos, out=nzr);
+   Not(in=nzr, out=zr);
+
+   And(a=ngIndicator, b=true, out=ng); //And together out[15] & 1 to test ng (any negative num starts w/1)
 }
