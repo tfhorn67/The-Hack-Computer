@@ -15,4 +15,8 @@ CHIP Bit {
 
     PARTS:
     // Put your code here:
+    //1 bit register here should be composed of a mux feeding into a dff
+    //mux selector=loadY/N, in_a=input, in_b=dff_output, out=dff_in
+    Mux(a=flopOut, b=in, sel=load, out=flopIn);
+    DFF(in=flopIn, out=out, out=flopOut);
 }
