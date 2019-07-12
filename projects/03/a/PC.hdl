@@ -17,4 +17,11 @@ CHIP PC {
 
     PARTS:
     // Put your code here:
+    //must have an incrementer, a register, and at least 3 Mux for conditionals
+
+    Inc16(in=m, out=mPlus);
+    Mux16(a=m, b=mPlus, sel=inc, out=j);
+    Mux16(a=j, b=in, sel=load, out=k);
+    Mux16(a=k, b[0..15]=false, sel=reset, out=l);
+    Register(in=l, load=true, out=out, out=m);
 }
